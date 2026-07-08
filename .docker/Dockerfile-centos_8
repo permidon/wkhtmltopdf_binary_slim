@@ -6,14 +6,18 @@ RUN find /etc/yum.repos.d -type f -exec sed -i 's/mirrorlist=http:\/\/mirrorlist
 RUN find /etc/yum.repos.d -type f -exec sed -i 's/\#baseurl=http:\/\/mirror.centos.org/baseurl=http:\/\/vault.centos.org/g' {} \;
 RUN dnf update -y
 
-# Swap to CentOS Stream 8 repos
+# Swap to CentOS Stream 8 repos (this replaces repo files, e.g. AppStream, with unpatched ones)
 RUN dnf swap centos-linux-repos centos-stream-repos -y
 
-# Install centos-release-stream (adds extra repo files, e.g. extras-common)
-RUN dnf install centos-release-stream -y
-RUN dnf swap centos-{linux,stream}-repos -y
+# Re-patch immediately, BEFORE any dnf command needs metadata
+RUN find /etc/yum.repos.d -type f -exec sed -i 's/mirrorlist=http:\/\/mirrorlist.centos.org/\#mirrorlist=http:\/\/mirrorlist.centos.org/g' {} \;
+RUN find /etc/yum.repos.d -type f -exec sed -i 's/\#baseurl=http:\/\/mirror.centos.org/baseurl=http:\/\/vault.centos.org/g' {} \;
+RUN dnf update -y
 
-# Re-patch ALL repo files again, since new ones were just added by the steps above
+# Install centos-release-stream (adds more repo files, e.g. extras-common)
+RUN dnf install centos-release-stream -y
+
+# Re-patch again, since the install above may have added/replaced more repo files
 RUN find /etc/yum.repos.d -type f -exec sed -i 's/mirrorlist=http:\/\/mirrorlist.centos.org/\#mirrorlist=http:\/\/mirrorlist.centos.org/g' {} \;
 RUN find /etc/yum.repos.d -type f -exec sed -i 's/\#baseurl=http:\/\/mirror.centos.org/baseurl=http:\/\/vault.centos.org/g' {} \;
 RUN dnf update -y
