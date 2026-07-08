@@ -6,4 +6,21 @@ RUN cd /etc/yum.repos.d/ \
     && sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' *.repo
 RUN dnf update -y
 RUN yum install -y ruby libjpeg-turbo libpng libXrender fontconfig libXext
+
+# The precompiled wkhtmltopdf binary is linked against OpenSSL 3.x (libssl.so.3),
+# but CentOS 8 only ships OpenSSL 1.1.1 in its repos. Build OpenSSL 3 from source
+# and expose it via LD_LIBRARY_PATH so the binary can find libssl.so.3 at runtime.
+RUN yum install -y perl-core gcc make wget
+RUN wget https://www.openssl.org/source/openssl-3.0.13.tar.gz \
+    && tar -xzf openssl-3.0.13.tar.gz \
+    && cd openssl-3.0.13 \
+    && ./config --prefix=/usr/local/ssl --openssldir=/usr/local/ssl shared \
+    && make -j$(nproc) \
+    && make install_sw \
+    && cd .. \
+    && rm -rf openssl-3.0.13 openssl-3.0.13.tar.gz \
+    && ldconfig
+
+ENV LD_LIBRARY_PATH=/usr/local/ssl/lib64:$LD_LIBRARY_PATH
+
 CMD /root/wkhtmltopdf_binary_gem/bin/wkhtmltopdf --version
