@@ -1,5 +1,9 @@
 require 'minitest/autorun'
 
+def arm?
+  ENV['ARM']
+end
+
 class WithDockerTest < Minitest::Test
   SETUP = `docker compose build --no-cache`
 
@@ -14,7 +18,7 @@ class WithDockerTest < Minitest::Test
   private
 
   def test_on_x86(with:)
-    test_on_docker(with: with)
+    test_on_docker(with: with) unless arm?
   end
 
   def test_on_x86_and_arm(with:)
