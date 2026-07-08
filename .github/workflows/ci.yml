@@ -3,29 +3,11 @@ name: CI
 on: [push, pull_request]
 
 jobs:
-  tests-on-x86-mac:
-    runs-on: macos-latest
-    strategy:
-      matrix:
-        ruby-version: ['3.2']
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install Ruby ${{ matrix.ruby-version }} on ${{ matrix.os }}
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby-version }}
-
-      - name: Install dependencies
-        run: bundle install
-
-      - name: Run tests with Ruby ${{ matrix.ruby-version }} on ${{ matrix.os }}
-        run: bundle exec rake
   tests-on-x86-docker:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby-version: ['3.2']
+        ruby-version: ["3.3"]
     steps:
       - uses: actions/checkout@v4
 
@@ -43,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby-version: ['3.2']
+        ruby-version: ["3.3"]
     steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -64,6 +46,3 @@ jobs:
           sudo apt-get install -y docker-compose
           bundle install
           bundle exec rake
-
-
-
