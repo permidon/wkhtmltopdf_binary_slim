@@ -9,9 +9,7 @@ def arm?
 end
 
 class WithDockerTest < Minitest::Test
-  SETUP = begin
-    `docker-compose build --no-cache` unless macos?
-  end
+  SETUP = (`docker compose build --no-cache` unless macos?)
 
   def test_centos_8
     test_on_x86 with: 'centos_8'
@@ -36,6 +34,6 @@ class WithDockerTest < Minitest::Test
   end
 
   def test_on_docker(with:)
-    assert_match(/wkhtmltopdf 0\.12\.6(.1)? \(with patched qt\)/, `docker-compose run --rm #{with}`.strip)
+    assert_match(/wkhtmltopdf 0\.12\.6(.1)? \(with patched qt\)/, `docker compose run --rm #{with}`.strip)
   end
 end
