@@ -40,7 +40,7 @@ if File.exist?("#{binary}.gz") && !File.exist?(binary)
 end
 
 unless File.exist? binary
-  raise 'Invalid platform, must be running on CentOS 8 or Debian 12' \
+  raise 'Invalid platform, must be running on Amazon Linux 2023 or Debian 12' \
         "(missing binary: #{binary})."
 end
 

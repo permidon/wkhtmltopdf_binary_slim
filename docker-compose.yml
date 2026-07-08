@@ -8,9 +8,9 @@ services:
     volumes:
       - .:/root/wkhtmltopdf_binary_gem
 
-  amazonlinux_23:
+  amzn_2023:
     build:
       context: .
-      dockerfile: .docker/Dockerfile-amazonlinux_23
+      dockerfile: .docker/Dockerfile-amzn_2023
     volumes:
       - .:/root/wkhtmltopdf_binary_gem
