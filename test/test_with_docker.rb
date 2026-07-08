@@ -1,7 +1,7 @@
 require 'minitest/autorun'
 
 class WithDockerTest < Minitest::Test
-  SETUP = (`docker compose build --no-cache` unless macos?)
+  SETUP = `docker compose build --no-cache`
 
   def test_debian_12
     test_on_x86_and_arm with: 'debian_12'
