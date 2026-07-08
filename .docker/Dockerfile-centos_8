@@ -1,28 +1,9 @@
 FROM centos:8
-# https://centos.org/centos-stream/#centos-stream-8
-
-# Replace mirror (initial CentOS Linux 8 repos)
-RUN find /etc/yum.repos.d -type f -exec sed -i 's/mirrorlist=http:\/\/mirrorlist.centos.org/\#mirrorlist=http:\/\/mirrorlist.centos.org/g' {} \;
-RUN find /etc/yum.repos.d -type f -exec sed -i 's/\#baseurl=http:\/\/mirror.centos.org/baseurl=http:\/\/vault.centos.org/g' {} \;
+# CentOS Linux 8 reached EOL Dec 2021; mirrorlist.centos.org is dead.
+# Point at vault.centos.org (archived packages) instead of converting to Stream.
+RUN cd /etc/yum.repos.d/ \
+    && sed -i 's/mirrorlist/#mirrorlist/g' *.repo \
+    && sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' *.repo
 RUN dnf update -y
-
-# Swap to CentOS Stream 8 repos (this replaces repo files, e.g. AppStream, with unpatched ones)
-RUN dnf swap centos-linux-repos centos-stream-repos -y
-
-# Re-patch immediately, BEFORE any dnf command needs metadata
-RUN find /etc/yum.repos.d -type f -exec sed -i 's/mirrorlist=http:\/\/mirrorlist.centos.org/\#mirrorlist=http:\/\/mirrorlist.centos.org/g' {} \;
-RUN find /etc/yum.repos.d -type f -exec sed -i 's/\#baseurl=http:\/\/mirror.centos.org/baseurl=http:\/\/vault.centos.org/g' {} \;
-RUN dnf update -y
-
-# Install centos-release-stream (adds more repo files, e.g. extras-common)
-RUN dnf install centos-release-stream -y
-
-# Re-patch again, since the install above may have added/replaced more repo files
-RUN find /etc/yum.repos.d -type f -exec sed -i 's/mirrorlist=http:\/\/mirrorlist.centos.org/\#mirrorlist=http:\/\/mirrorlist.centos.org/g' {} \;
-RUN find /etc/yum.repos.d -type f -exec sed -i 's/\#baseurl=http:\/\/mirror.centos.org/baseurl=http:\/\/vault.centos.org/g' {} \;
-RUN dnf update -y
-
-# Sync
-RUN dnf distro-sync -y
 RUN yum install -y ruby libjpeg-turbo libpng libXrender fontconfig libXext
 CMD /root/wkhtmltopdf_binary_gem/bin/wkhtmltopdf --version
