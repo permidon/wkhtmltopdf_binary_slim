@@ -7,3 +7,10 @@ services:
       dockerfile: .docker/Dockerfile-debian_12_arm
     volumes:
       - .:/root/wkhtmltopdf_binary_gem
+
+  amzn_2023:
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile-amzn_2023_arm
+    volumes:
+      - .:/root/wkhtmltopdf_binary_gem
