@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 services:
   debian_12:
@@ -8,16 +8,9 @@ services:
     volumes:
       - .:/root/wkhtmltopdf_binary_gem
 
-  centos_8:
+  amzn_2023:
     build:
       context: .
-      dockerfile: .docker/Dockerfile-centos_8
-    volumes:
-      - .:/root/wkhtmltopdf_binary_gem
-
-  amazonlinux_23:
-    build:
-      context: .
-      dockerfile: .docker/Dockerfile-amazonlinux_23
+      dockerfile: .docker/Dockerfile-amzn_2023
     volumes:
       - .:/root/wkhtmltopdf_binary_gem
